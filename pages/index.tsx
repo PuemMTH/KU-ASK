@@ -1,71 +1,156 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import { ReactNode, useState, useEffect } from 'react';
+import { Image, Box, Flex, Avatar, Link, Button, Menu, MenuButton, MenuList, MenuItem, MenuDivider, useDisclosure, useColorModeValue, Stack, useColorMode, Center, color, HStack, Input, Popover, PopoverAnchor, PopoverBody, PopoverContent, PopoverTrigger, Radio, RadioGroup, Card, CardBody, CardFooter, CardHeader, Heading, Text, StatGroup, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Breadcrumb, BreadcrumbItem, BreadcrumbLink, List, ListIcon, ListItem } from '@chakra-ui/react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { NextRouter, useRouter } from 'next/router';
+import Notiflix from 'notiflix';
+import { useReadLocalStorage } from 'usehooks-ts'
+import { LoginInF } from '../interface/global_interface';
+import Sidebar from '../components/Sidebar';
 
-export default function Home() {
+import AxiosServiceFrontend from '../services/faxios.service';
+import Head from 'next/head';
+import { MdCheckCircle, MdSettings } from 'react-icons/md';
+
+export default function Nav() {
+  const router: NextRouter = useRouter()
+  const accesstoken = useReadLocalStorage<string | undefined>("accesstoken");
+  const user = useReadLocalStorage<LoginInF | undefined>("user");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUser, setIsUser] = useState<LoginInF | undefined>(undefined);
+
+  let FAxios = new AxiosServiceFrontend();
+  const removelocalStorage = () => {
+    localStorage.removeItem('accesstoken');
+    localStorage.removeItem('user');
+    // window.location.href = '/auth/login';
+    window.location.href = '/auth/login';
+  }
+
+  useEffect(() => {
+    Notiflix.Loading.dots('Loading...');
+    if (user !== undefined && user !== null) {
+      if(accesstoken !== undefined && accesstoken !== null && typeof accesstoken === 'string'){
+        let check = FAxios.axiosInstance.post('/token', { token_verify: accesstoken })
+        check.then((res) => {
+          if(res.status === 200){
+            setIsUser(user);
+          }else{
+            removelocalStorage()
+          }
+        }).catch(() => {
+          removelocalStorage()
+        });
+      }
+    }else{
+      removelocalStorage()
+    }
+    setTimeout(() => {
+      Notiflix.Loading.remove();
+    }, 1000)
+    setIsLoading(true);
+  }, [user, accesstoken])
+
+  const [time, setTime] = useState<Date>(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date())
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const CompoNode: ReactNode = (
+    <>
+      <Stack spacing='2'>
+          <Card variant={"outline"}>
+            <CardBody>
+              <StatGroup>
+                <Stat>
+                  <StatLabel>Time</StatLabel>
+                  <StatNumber>{
+                    time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds() + ' ' + (time.getHours() >= 12 ? 'PM' : 'AM')
+                  }</StatNumber>
+                  <StatHelpText>
+                    <StatArrow type='increase' />
+                    {time.getHours() >= 12 ? 'Good Afternoon' : 'Good Morning' + ' ' + isUser?.user.firstNameEn + ' ' + isUser?.user.lastNameEn}
+                  </StatHelpText>
+                </Stat>
+
+                <Stat>
+                  <StatLabel>Date</StatLabel>
+                  <StatNumber>{time.getDate() + '/' + (time.getMonth() + 1) + '/' + time.getFullYear()}</StatNumber>
+                  <StatHelpText>
+                    <StatArrow type='decrease' />
+                    {isUser?.user.student.campusNameTh}
+                  </StatHelpText>
+                </Stat>
+              </StatGroup>
+            </CardBody>
+          </Card>
+          <Card variant={"outline"} align='left'>
+            <CardHeader>
+              <Heading size='sm'> 
+                แผนการพัฒนาระบบ
+              </Heading>
+            </CardHeader>
+            <CardBody>
+            <List spacing={3}>
+              <ListItem>
+                <ListIcon as={MdCheckCircle} color='green.500' />
+                ระบบแสดงข้อมูลสถิติการทำงานของระบบ
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdCheckCircle} color='green.500' />
+                หน้า Home แสดงแผนการทำงาน
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdCheckCircle} color='green.500' />
+                หน้า Course ส่วนการแสดงข้อมูลของตารางที่จัดไว้
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdCheckCircle} color='green.500' />
+                หน้า Course ส่วนการแก้ไขข้อมูล
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdCheckCircle} color='green.500' />
+                หน้า Course ส่วนการ Sync ข้อมูลจากระบบ myku
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdCheckCircle} color='green.500' />
+                หน้า Search ส่วนการ ค้นหาและแสดงข้อมูล รายละเอียดของนรายวิชา
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdSettings} color='yellow.500' />
+                หน้า TimeTable ส่วนการแสดงตารางเรียน
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdSettings} color='yellow.500' />
+                หน้า TimeTable ส่วนการแก้ไขตารางเรียน
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdSettings} color='yellow.500' />
+                หน้า TimeTable ส่วนการ Sync ข้อมูลจากระบบ myku
+              </ListItem>
+              <ListItem>
+                <ListIcon as={MdSettings} color='red.500' />
+                หน้า Setting ส่วนการตั้งค่าการใช้งาน
+              </ListItem>
+            </List>
+            </CardBody>
+            <CardFooter>
+              <Button colorScheme='blue'>View here</Button>
+            </CardFooter>
+          </Card>
+      </Stack>
+  </>
+  )
+
   return (
-    <div className={styles.container}>
+    <>
       <Head>
-        <title>Create Next App</title>
-        <meta name="description" content="Generated by create next app" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Home</title>
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
-    </div>
+      <Sidebar title={"Home"} users={isUser} _children={CompoNode} />
+    </>
   )
 }

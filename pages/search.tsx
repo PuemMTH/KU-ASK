@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { Image, Box, Flex, Avatar, Link, Button, Menu, MenuButton, MenuList, MenuItem, MenuDivider, useDisclosure, useColorModeValue, Stack, useColorMode, Center, color, HStack, Input, Popover, PopoverAnchor, PopoverBody, PopoverContent, PopoverTrigger, Radio, RadioGroup, Card, CardBody, CardFooter, CardHeader, Heading, Text, StatGroup, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Breadcrumb, BreadcrumbItem, BreadcrumbLink, SimpleGrid, GridItem, Grid } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import * as Icon from '@chakra-ui/icons';
 import { NextRouter, useRouter } from 'next/router';
 import Notiflix from 'notiflix';
 import { useReadLocalStorage } from 'usehooks-ts'
@@ -74,8 +74,6 @@ export default function Nav() {
               />
             </CardBody>
           </Card>
-          {/* <SimpleGrid columns={2} spacing={2}> */}
-          {/* if mobile size to set colums to 1 */}
           <SimpleGrid columns={[1, 2, 2, 2]} spacing={2}>
             {
               dataSearch?.filter((item: any) => {
@@ -85,7 +83,7 @@ export default function Nav() {
                   return item
                 }
               }).map((item: any, index: number) => {
-                if(index < 6){
+                if(index < 8){
                   return (
                     <GridItem key={index}>
                       <Card variant={"outline"}>
@@ -94,10 +92,10 @@ export default function Nav() {
                             {item.sub_code}
                           </Text>
                           <Text>
-                            วิชา {item.subject_name}
+                            <Icon.ArrowForwardIcon /> {item.subject_name}
                           </Text>
                           <Text>
-                            กลุ่ม {item.group_}
+                            <Icon.ArrowForwardIcon /> {item.group_}
                           </Text>
                         </CardBody>
                       </Card>

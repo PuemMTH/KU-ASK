@@ -47,14 +47,13 @@ const CardTime: React.FC<{ time: string[]; day: string[] }> = ({ time, day }) =>
       "SUN": 156
     }
     if (area) {
-      const divs = area.querySelectorAll("div");
-      divs.forEach((div, index) => {
-        if (index == INDEX_DAY["MON"] + 2) {
-          div.style.backgroundColor = "red";
-          div.style.color = "white";
-        }
-      })
-
+      // const divs = area.querySelectorAll("div");
+      // divs.forEach((div, index) => {
+      //   if (index == INDEX_DAY["MON"] + 2) {
+      //     div.style.backgroundColor = "red";
+      //     div.style.color = "white";
+      //   }
+      // })
     }
   }, [1]);
 

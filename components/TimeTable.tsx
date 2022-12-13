@@ -4,6 +4,7 @@ import { MdCheckCircle, MdSettings } from "react-icons/md";
 import tw from "twin.macro";
 const staticTime: string[] = ["Day/Time", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00" ];
 const staticDay: string[] = [ "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" ];
+
 interface courseInf {
   section_id: number;
   groupheader: string;
@@ -31,14 +32,6 @@ interface courseInf {
   time_start: number;
 }
 
-
-
-
-
-
-
-
-
 const CardTime: React.FC<{ time: string[]; day: string[] }> = ({ time, day }) => {
   const ref_area = useRef<HTMLDivElement>(null);
 
@@ -58,6 +51,7 @@ const CardTime: React.FC<{ time: string[]; day: string[] }> = ({ time, day }) =>
       divs.forEach((div, index) => {
         if (index == INDEX_DAY["MON"] + 2) {
           div.style.backgroundColor = "red";
+          div.style.color = "white";
         }
       })
 
@@ -70,16 +64,16 @@ const CardTime: React.FC<{ time: string[]; day: string[] }> = ({ time, day }) =>
                 <Card variant={"outline"} align='left'>
                   <CardBody>
                       <SimpleGrid columns={13} spacing={0} border="1px">
-                      {time.map((time, index) => (
-                        <Box key={index} p={2} >
+                      {time.map((time, index3) => (
+                        <Box key={index3} p={2} >
                           <Text fontSize='sm'>{time}</Text>
                         </Box>
                       ))}
                     </SimpleGrid>
                     <SimpleGrid columns={26} spacing={0} border="0px" ref={ref_area} >
-                      {day.map((time, index) => (
+                      {day.map((time, index2) => (
                         <>
-                          <Box key={index} p={2}>
+                          <Box key={index2} p={2}>
                             <Text fontSize='sm'>{time}</Text>
                           </Box>
                           {

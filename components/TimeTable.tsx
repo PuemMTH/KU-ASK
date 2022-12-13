@@ -30,15 +30,13 @@ interface courseInf {
   time_start: number;
 }
 const CardTime: React.FC<{ time: string[]; day: string[] }> = ({ time, day }) => {
-  const bg = useColorModeValue("white", "gray.800");
-  const color = useColorModeValue("gray.800", "white");
   return (
     <>
         <Stack spacing='2'>
           <Card variant={"outline"} align='left'>
             <CardHeader>
               <Heading size='sm'> 
-                กำลังพัฒนา
+                กำลังอยู่ในช่วงการพัฒนา
               </Heading>
             </CardHeader>
           </Card>

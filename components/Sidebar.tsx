@@ -17,7 +17,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', icon: FiHome, path: "/" },
   { name: 'Course', icon: FiTrendingUp, path: "/course" },
   { name: 'Search', icon: FiCompass, path: "/search" },
-  { name: 'Timetable', icon: FiCompass, path: "/timetable" },
+  // { name: 'Timetable', icon: FiCompass, path: "/timetable" },
   { name: 'Credit', icon: FiStar, path: "/credit" },
 ];
 
@@ -198,10 +198,10 @@ const MobileNav = ({ title, logout, onOpen, SwitchMode, usersState, ...rest }: M
                   src={'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'}
                 />
                 <VStack
-                  display={{ base: 'none', md: 'flex' }}
-                  alignItems="flex-start"
-                  spacing="1px"
-                  ml="2">
+                    display={{ base: 'none', md: 'flex' }}
+                    alignItems="flex-start"
+                    spacing="1px"
+                    ml="2">
                   <Text fontSize="sm">{usersState?.user.firstNameEn} {usersState?.user.lastNameEn}</Text>
                   <Text fontSize="xs" color="gray.600">
                     {usersState?.user.idCode}

@@ -1,6 +1,6 @@
-import { Button, Checkbox, Flex, FormControl, FormLabel, Heading, Input, Link, Stack, Image, CreateToastFnReturn, Text } from "@chakra-ui/react";
+import { Button, Checkbox, Flex, FormControl, FormLabel, Heading, Input, Link, Stack, Image, CreateToastFnReturn, Text, InputRightElement, InputGroup } from "@chakra-ui/react";
 import Notiflix from "notiflix";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import FAxiosService from "../../services/faxios.service";
 import { LoginInF, User } from "../../interface/global_interface";
 import { useLocalStorage } from "usehooks-ts";
@@ -86,6 +86,8 @@ export default function SplitScreen() {
     }
 
   };
+  const [show, setShow] = useState(false)
+  const handleClick = () => setShow(!show)
 
   return (
     <>
@@ -97,8 +99,15 @@ export default function SplitScreen() {
         direction={{ base: "column", md: "row" }}
       >
         <Hide below='md'>
-          <Flex flex={2} bg={"blue.700"}>
-            {/*  */}
+          <Flex
+            flex={2} 
+            bg={"blue.700"}
+            bgImage={'url(https://gamerstyle.com.mx/wp-content/uploads/2022/09/Spy-x-Family-fecha-parte-2.jpg)'}
+            bgPos={'center'}
+            bgSize={'cover'}
+            align={"center"}
+          >
+            {/* image */}
           </Flex>
         </Hide>
         <Flex p={8} flex={1} align={"center"} justify={"center"}>
@@ -107,11 +116,24 @@ export default function SplitScreen() {
               <Heading fontSize={"2xl"} py="5">Sign in to your account</Heading>
               <FormControl id="text">
                 <FormLabel>บัญชีผู้ใช้เครือข่ายนนทรี</FormLabel>
-                <Input type="text" ref={username} />
+                <Input type="text" placeholder='เช่น 64xxxxxxxx' ref={username} />
               </FormControl>
               <FormControl id="password">
                 <FormLabel>รหัสผ่าน</FormLabel>
-                <Input type="password" ref={password} />
+                <InputGroup size='md'>
+                  <Input
+                    pr='4.5rem'
+                    ref={password}
+                    type={show ? 'text' : 'password'}
+                    placeholder='รหัสผ่านผู้ใช้เครือข่ายนนทรี'
+                  />
+                  <InputRightElement width='4.5rem' >
+                    <Button h='1.75rem' size='md' onClick={handleClick}>
+                      {show ? <MdVisibility/> : <MdVisibilityOff/>}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+
               </FormControl>
               <Stack spacing={6}>
                 <Stack
@@ -121,12 +143,12 @@ export default function SplitScreen() {
                 >
                 </Stack>
                 <Button colorScheme={"blue"} variant={"solid"} type="submit" >
-                  Sign in
+                  เข้าสู่ระบบ
                 </Button>
                 <Text color={"gray.400"}>
                   ทั้งหมดนี้ <Text as="span" color="red.400"> ไม่ใช่ </Text> เว็บของมหาลัยจริง <Text as="span" color="red.400"> KU-ASK </Text>
                   เป็นเว็บไซต์ที่ทำขึ้นเพื่อทำให้สดวกต่อ การจัดการหน่วยกิต
-                  โดยใช้ข้อมูลจาก <Text as="span" color="green.400"> https://my.ku.th/ </Text>
+                  โดยใช้ข้อมูลจาก <Text as="span" color="green.400"> <a href="https://my.ku.th/">https://my.ku.th/</a> </Text>
                 </Text>
               </Stack>
             </form>

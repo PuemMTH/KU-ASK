@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, FormControl, FormLabel, Heading, Input, Link, Stack, Image, CreateToastFnReturn } from "@chakra-ui/react";
+import { Button, Checkbox, Flex, FormControl, FormLabel, Heading, Input, Link, Stack, Image, CreateToastFnReturn, Text } from "@chakra-ui/react";
 import Notiflix from "notiflix";
 import { useEffect, useRef } from "react";
 import FAxiosService from "../../services/faxios.service";
@@ -6,6 +6,11 @@ import { LoginInF, User } from "../../interface/global_interface";
 import { useLocalStorage } from "usehooks-ts";
 import { NextRouter, useRouter } from "next/router";
 import { useToast } from '@chakra-ui/react'
+import { Show, Hide } from '@chakra-ui/react'
+
+// eye icon for show password
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import Head from "next/head";
 
 export default function SplitScreen() {
   const username = useRef<HTMLInputElement>(null);
@@ -19,6 +24,19 @@ export default function SplitScreen() {
 
   let AxiosProvider = new FAxiosService(); 
 
+  useEffect(() => {
+    // password edit eye icon for show password
+    const password = document.getElementById("password");
+    const eye = document.getElementById("eye");
+    eye?.addEventListener("click", togglePass);
+    function togglePass() {
+      eye?.classList.toggle("active");
+      (password as HTMLInputElement).type === "password"
+        ? (password as HTMLInputElement).type = "text"
+        : (password as HTMLInputElement).type = "password";
+    }
+  }, [1]);
+
   const haddleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const usernameValue = username.current?.value;
@@ -28,6 +46,9 @@ export default function SplitScreen() {
 
     if (!usernameValue || !passwordValue) {
       Notiflix.Notify.failure("กรุณากรอกข้อมูลให้ครบ");
+      setTimeout(() => {
+        Notiflix.Loading.remove()
+      }, 2000)
       return;
     }
 
@@ -67,38 +88,51 @@ export default function SplitScreen() {
   };
 
   return (
-    <Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
-      <Flex flex={2} bg={"blue.700"}>
-        {/*  */}
-      </Flex>
-      <Flex p={8} flex={1} align={"center"} justify={"center"}>
-        <Stack spacing={4} w={"full"} maxW={"md"}>
-          <form onSubmit={haddleLogin}>
-            <Heading fontSize={"2xl"}>Sign in to your account</Heading>
-            <FormControl id="text">
-              <FormLabel>บัญชีผู้ใช้เครือข่ายนนทรี</FormLabel>
-              <Input type="text" ref={username} />
-            </FormControl>
-            <FormControl id="password">
-              <FormLabel>รหัสผ่าน</FormLabel>
-              <Input type="password" ref={password} />
-            </FormControl>
-            <Stack spacing={6}>
-              <Stack
-                direction={{ base: "column", sm: "row" }}
-                align={"start"}
-                justify={"space-between"}
-              >
-                <Checkbox>Remember me</Checkbox>
-                <Link color={"blue.500"}>Forgot password?</Link>
+    <>
+      <Head>
+        <title>Sign in</title>
+      </Head>
+      <Stack
+        minH={"100vh"}
+        direction={{ base: "column", md: "row" }}
+      >
+        <Hide below='md'>
+          <Flex flex={2} bg={"blue.700"}>
+            {/*  */}
+          </Flex>
+        </Hide>
+        <Flex p={8} flex={1} align={"center"} justify={"center"}>
+          <Stack spacing={4} w={"full"} maxW={"md"}>
+            <form onSubmit={haddleLogin}>
+              <Heading fontSize={"2xl"} py="5">Sign in to your account</Heading>
+              <FormControl id="text">
+                <FormLabel>บัญชีผู้ใช้เครือข่ายนนทรี</FormLabel>
+                <Input type="text" ref={username} />
+              </FormControl>
+              <FormControl id="password">
+                <FormLabel>รหัสผ่าน</FormLabel>
+                <Input type="password" ref={password} />
+              </FormControl>
+              <Stack spacing={6}>
+                <Stack
+                  direction={{ base: "column", sm: "row" }}
+                  align={"end"}
+                  justify={"end"}
+                >
+                </Stack>
+                <Button colorScheme={"blue"} variant={"solid"} type="submit" >
+                  Sign in
+                </Button>
+                <Text color={"gray.400"}>
+                  ทั้งหมดนี้ <Text as="span" color="red.400"> ไม่ใช่ </Text> เว็บของมหาลัยจริง <Text as="span" color="red.400"> KU-ASK </Text>
+                  เป็นเว็บไซต์ที่ทำขึ้นเพื่อทำให้สดวกต่อ การจัดการหน่วยกิต
+                  โดยใช้ข้อมูลจาก <Text as="span" color="green.400"> https://my.ku.th/ </Text>
+                </Text>
               </Stack>
-              <Button colorScheme={"blue"} variant={"solid"} type="submit" >
-                Sign in
-              </Button>
-            </Stack>
-          </form>
-        </Stack>
-      </Flex>
-    </Stack>
+            </form>
+          </Stack>
+        </Flex>
+      </Stack>
+    </>
   );
 }

@@ -133,7 +133,6 @@ export default function SplitScreen() {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
-
               </FormControl>
               <Stack spacing={6}>
                 <Stack

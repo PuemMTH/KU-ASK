@@ -107,7 +107,6 @@ export default function SplitScreen() {
             bgSize={'cover'}
             align={"center"}
           >
-            {/* image */}
           </Flex>
         </Hide>
         <Flex p={8} flex={1} align={"center"} justify={"center"}>
@@ -116,7 +115,7 @@ export default function SplitScreen() {
               <Heading fontSize={"2xl"} py="5">Sign in to your account</Heading>
               <FormControl id="text">
                 <FormLabel>บัญชีผู้ใช้เครือข่ายนนทรี</FormLabel>
-                <Input type="text" placeholder='เช่น 64xxxxxxxx' ref={username} />
+                <Input type="text" placeholder='เช่น b64xxxxxxxx' ref={username} />
               </FormControl>
               <FormControl id="password">
                 <FormLabel>รหัสผ่าน</FormLabel>

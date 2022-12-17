@@ -8,7 +8,8 @@ import Sidebar from '../components/Sidebar';
 
 import AxiosServiceFrontend from '../services/faxios.service';
 import Head from 'next/head';
-import TimeTable from '../components/TimeTable';
+import TimeTable from '../components/TimeTable/TimeTable';
+import CardTable from '../components/TimeTable/CardTable';
 
 export default function TimeTableShow() {
   const router: NextRouter = useRouter()
@@ -50,7 +51,8 @@ export default function TimeTableShow() {
 
   const CompoNode: ReactNode = (
     <>
-        <TimeTable />
+        {/* <TimeTable /> */}
+        <CardTable />
     </>
   )
 

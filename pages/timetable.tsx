@@ -1,14 +1,13 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect, useRef } from 'react';
 import { Image, Box, Flex, Avatar, Link, Button, Menu, MenuButton, MenuList, MenuItem, MenuDivider, useDisclosure, useColorModeValue, Stack, useColorMode, Center, color, HStack, Input, Popover, PopoverAnchor, PopoverBody, PopoverContent, PopoverTrigger, Radio, RadioGroup, Card, CardBody, CardFooter, CardHeader, Heading, Text, StatGroup, Stat, StatArrow, StatHelpText, StatLabel, StatNumber, Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
 import { NextRouter, useRouter } from 'next/router';
 import Notiflix from 'notiflix';
 import { useReadLocalStorage } from 'usehooks-ts'
-import { LoginInF } from '../interface/global_interface';
+import { LoginInF, ResultGroupCourse } from '../interface/global_interface';
 import Sidebar from '../components/Sidebar';
 
 import AxiosServiceFrontend from '../services/faxios.service';
 import Head from 'next/head';
-import TimeTable from '../components/TimeTable/TimeTable';
 import CardTable from '../components/TimeTable/CardTable';
 
 export default function TimeTableShow() {
@@ -17,6 +16,9 @@ export default function TimeTableShow() {
   const user = useReadLocalStorage<LoginInF | undefined>("user");
   const [isLoading, setIsLoading] = useState(false);
   const [isUser, setIsUser] = useState<LoginInF | undefined>(undefined);
+
+  const [gcData, setGcData] = useState<ResultGroupCourse[] | undefined>(undefined)
+  
 
   let FAxios = new AxiosServiceFrontend();
   const removelocalStorage = () => {
@@ -46,22 +48,35 @@ export default function TimeTableShow() {
     setTimeout(() => {
       Notiflix.Loading.remove();
     }, 1000)
-    setIsLoading(true);
   }, [user, accesstoken])
+
+  useEffect(() => {
+    Notiflix.Loading.dots('Loading...');
+    let check = FAxios.axiosInstance.post('/ku/getGroupCourse', { token_verify: accesstoken, academicYear: "2560", semester: "2"  })
+    check.then((res) => {
+      console.log(res.data.data.results[0].course)
+      setGcData(res.data.data.results[0].course)
+      Notiflix.Loading.remove();
+    } ).catch(() => {
+      Notiflix.Loading.remove();
+    });
+  }, [accesstoken])
+
+
 
   const CompoNode: ReactNode = (
     <>
-        {/* <TimeTable /> */}
-        <CardTable />
+        <CardTable GroupCourse={gcData}/>
     </>
   )
 
   return (
     <>
       <Head>
-        <title>TimeTable</title>
+        <title >TimeTable</title>
       </Head>
       <Sidebar title={"TimeTable"} users={isUser} _children={CompoNode} />
+      
     </>
   )
 }

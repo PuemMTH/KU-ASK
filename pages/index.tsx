@@ -22,7 +22,6 @@ export default function Nav() {
   const removelocalStorage = () => {
     localStorage.removeItem('accesstoken');
     localStorage.removeItem('user');
-    // window.location.href = '/auth/login';
     window.location.href = '/auth/login';
   }
 
@@ -120,7 +119,7 @@ export default function Nav() {
                 หน้า Search ส่วนการ ค้นหาและแสดงข้อมูล รายละเอียดของนรายวิชา
               </ListItem>
               <ListItem>
-                <ListIcon as={MdSettings} color='yellow.500' />
+                <ListIcon as={MdCheckCircle} color='green.500' />
                 หน้า TimeTable ส่วนการแสดงตารางเรียน
               </ListItem>
               <ListItem>

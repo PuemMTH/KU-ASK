@@ -52,7 +52,7 @@ export default function TimeTableShow() {
 
   useEffect(() => {
     Notiflix.Loading.dots('Loading...');
-    let check = FAxios.axiosInstance.post('/ku/getGroupCourse', { token_verify: accesstoken, academicYear: "2560", semester: "2"  })
+    let check = FAxios.axiosInstance.post('/ku/getGroupCourse', { token_verify: accesstoken, academicYear: "2565", semester: "2"  })
     check.then((res) => {
       console.log(res.data.data.results[0].course)
       setGcData(res.data.data.results[0].course)

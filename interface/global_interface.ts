@@ -1,4 +1,5 @@
 export interface ResultGroupCourse {
+    day: string;
     section_id: number;
     groupheader: string;
     weekstartday: Date;

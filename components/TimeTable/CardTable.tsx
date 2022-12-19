@@ -78,7 +78,6 @@ const CardTime: React.FC<{GroupCourse: ResultGroupCourse[] | undefined}> = ({Gro
     setTable(e.target.checked ? 'table' : 'grid')
   }
 
-
   return (
     <>
       <Card 

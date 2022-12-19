@@ -82,7 +82,6 @@ const TableEditor = ({ data, setData, _children }: any) => {
             temp[index].section = section;
             setMock(temp);
             handleSave();
-            // console.log(temp);
         } catch {
             toast({
                 title: 'An error occurred.',
@@ -139,10 +138,7 @@ const TableEditor = ({ data, setData, _children }: any) => {
                                                 <Td>
                                                     <Select
                                                         placeholder='ยังไม่ได้เลือก'
-                                                        onChange={(e) => {
-                                                            handleChange(e, index)
-                                                            // console.log(item.group_)
-                                                        }}
+                                                        onChange={(e) => handleChange(e, index)}
                                                         value={dict_key[item.group_]}
                                                     >
                                                         <option value='01'>หมวดวิชาศึกษาทั่วไป - กลุ่มสาระอยู่ดีมีสุข</option>

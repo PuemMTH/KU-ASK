@@ -1,9 +1,34 @@
-import { Box,  Button,  Card, Text, CardBody,  CardFooter,  CardHeader,  chakra, Container, Flex,  Heading,  List,  ListIcon,  ListItem,  SimpleGrid,  Stack,  Stat,  StatArrow,  StatGroup,  StatHelpText,  StatLabel,  StatNumber,  useColorModeValue, VStack, Avatar, Badge, Table, Image, FormLabel, Switch, FormControl, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box,  Button,  Card, Text, CardBody, Heading, SimpleGrid, Stack, Badge, Table, TableContainer, Tbody, Td, Th, Thead, Tr, Spacer } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { ResultGroupCourse } from "../../interface/global_interface";
-import { useLocalStorage, useReadLocalStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
+import { DownloadIcon, CheckIcon } from '@chakra-ui/icons'
 
+import domSave from 'dom-to-image';
 const CardTime: React.FC<{GroupCourse: ResultGroupCourse[] | undefined}> = ({GroupCourse}) => {
+
+  const ref_to = useRef<HTMLDivElement>(null)
+  const ref_lang = useRef<HTMLButtonElement>(null)
+  const ref_table = useRef<HTMLButtonElement>(null)
+
+  const handleSave = (e: HTMLDivElement) => {
+    domSave.toPng(e,
+      {
+        bgcolor: '#1A202C',
+        quality: 1,
+        style: {
+          width: '100%',
+          height: '100%',
+        }
+      }
+      ).then((dataUrl: any) => {
+      const link = document.createElement('a');
+      link.download = 'TimeTable_KU-ASK.png';
+      link.href = dataUrl;
+      link.click();
+    });
+  }
+
   const cScheme = (type: string) => {
     if(type == 'บรรยาย ') return ''
     if(type == 'ปฏิบัติ ') return 'red'
@@ -71,87 +96,114 @@ const CardTime: React.FC<{GroupCourse: ResultGroupCourse[] | undefined}> = ({Gro
   const [getLocalLang, setLocalLang] = useLocalStorage('lang', 'en')
   const [getTable, setTable] = useLocalStorage('table', 'grid')
 
-  const handleChangeLang = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalLang(e.target.checked ? 'th' : 'en')
+  useEffect(() => {
+    // set text ref_table
+    if(getTable == 'table') {
+      ref_table.current!.innerHTML = 'Grid'
+    } else {
+      ref_table.current!.innerHTML = 'Table'
+    }
+
+    if(getLocalLang == 'th') {
+      ref_lang.current!.innerHTML = 'EN'
+    } else {
+      ref_lang.current!.innerHTML = 'TH'
+    }
+  }, [getTable, getLocalLang])
+
+  const handleChangeLang = () => {
+    setLocalLang(getLocalLang == 'th' ? 'en' : 'th')
   }
-  const handleChangeTabke = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTable(e.target.checked ? 'table' : 'grid')
+  const handleChangeTabke = () => {
+    setTable(getTable == 'table' ? 'grid' : 'table')
   }
 
   return (
     <>
-      <Card 
-        variant={"outline"}
-      >
-        <CardBody>
-          <FormControl as={SimpleGrid} columns={{ base: 2, lg: 4 }}>
-            <FormLabel htmlFor='isChecked'>Switch Lang:</FormLabel>
-            <Switch onChange={(e) => handleChangeLang(e) } defaultChecked={getLocalLang == 'th' ? true : false} />
-            <FormLabel htmlFor='isChecked'>Switch Table:</FormLabel>
-            <Switch onChange={(e) => handleChangeTabke(e) } defaultChecked={getTable == 'table' ? true : false} />
-          </FormControl>
+      <Card variant={"outline"} >
+        <CardBody p={2}>
+          <Stack direction='row' spacing={1}>
+            <Button leftIcon={<CheckIcon />} colorScheme='linkedin' variant='outline' ref={ref_lang} onClick={() => handleChangeLang()} >
+              Lang
+            </Button>
+            <Button leftIcon={<CheckIcon />} colorScheme='facebook' variant='outline' ref={ref_table} onClick={() => handleChangeTabke()} >
+              Table
+            </Button>
+            <Spacer />
+            <Button rightIcon={<DownloadIcon />} colorScheme='green' variant='outline' onClick={() => {
+              if(!ref_to.current != null) {
+                // @ts-ignore
+                handleSave(ref_to?.current)
+              }
+            }}>
+              Download
+            </Button>
+          </Stack>
         </CardBody>
       </Card>
 
-      { getTable == 'table' ? (
-        <>
-          <TableContainer pt="2" dropShadow={"3px"}>
-            <Table
-              variant='striped'
-              size='sm'
-            >
-              <Thead>
-                <Tr>
-                  <Th> { getLocalLang == 'en' ? LangThEn.en.DAY : LangThEn.th.DAY } </Th>
-                  <Th> { getLocalLang == 'en' ? LangThEn.en.TIME : LangThEn.th.TIME } </Th>
-                  <Th> { getLocalLang == 'en' ? LangThEn.en.SUBJECT_CODE : LangThEn.th.SUBJECT_CODE } </Th>
-                  <Th> { getLocalLang == 'en' ? LangThEn.en.SUBJECT_NAME : LangThEn.th.SUBJECT_NAME } </Th>
-                  <Th> { getLocalLang == 'en' ? LangThEn.en.TEACHER : LangThEn.th.TEACHER } </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {GroupCourse?.map((item, index) => (
-                  <Tr key={index}>
-                    <Td> { getLocalLang == 'en' ? haddleDayOfWeek(item.day_w, 'en') : haddleDayOfWeek(item.day_w, 'th') } </Td>
-                    <Td> { item.time_from } - {item.time_to} </Td>
-                    <Td> { item.subject_code } </Td>
-                    <Td> { getLocalLang == 'en' ? item.subject_name_en : item.subject_name_th } </Td>
-                    <Td> { getLocalLang == 'en' ? item.teacher_name_en : item.teacher_name } </Td>
+      <div ref={ref_to}>
+        { getTable == 'table' ? (
+          <>
+            <TableContainer pt="2" dropShadow={"3px"}>
+              <Table
+                variant='striped'
+                size='sm'
+              >
+                <Thead>
+                  <Tr>
+                    <Th> { getLocalLang == 'en' ? LangThEn.en.DAY : LangThEn.th.DAY } </Th>
+                    <Th> { getLocalLang == 'en' ? LangThEn.en.TIME : LangThEn.th.TIME } </Th>
+                    <Th> { getLocalLang == 'en' ? LangThEn.en.SUBJECT_CODE : LangThEn.th.SUBJECT_CODE } </Th>
+                    <Th> { getLocalLang == 'en' ? LangThEn.en.SUBJECT_NAME : LangThEn.th.SUBJECT_NAME } </Th>
+                    <Th> { getLocalLang == 'en' ? LangThEn.en.TEACHER : LangThEn.th.TEACHER } </Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </>
-      ) : (
-        <SimpleGrid columns={[1, 1, 1, 2, 2]} spacing={2} pt="2" dropShadow={"3px"}>
-          {
-            GroupCourse?.map((item, index) => (
-              <Card direction={{ base: 'column', sm: 'row' }} overflow='hidden' variant='outline' key={index}>
-                <Box bg={cScheme(item.day_w)+".300"} w='20px' p={0} color='white' />
-                <Stack>
-                  <CardBody>
-                    <Heading size='sm'>
-                        {item.subject_code}
-                        {" "}<Badge colorScheme='blue'>{item.section_code}</Badge>
-                        {" "}{ getLocalLang == 'en' ? <Badge colorScheme={cScheme(item.day_w)}>{item.section_type_en}</Badge> : <Badge colorScheme={cScheme(item.day_w)}>{item.section_type_th}</Badge> }
-                    </Heading>
-                    <Text>{ getLocalLang == 'en' ? item.subject_name_en : item.subject_name_th }</Text>
-                    <Text>{ getLocalLang == 'en' ? item.teacher_name_en : item.teacher_name }</Text>
-                    <Text>
-                        <Badge colorScheme={cScheme(item.day_w)}> {
-                          getLocalLang == 'en' ? haddleDayOfWeek(item.day_w, 'en') : haddleDayOfWeek(item.day_w, 'th')
-                        } </Badge>
-                        {" "}<Badge colorScheme='purple'>{item.time_from} - {item.time_to}</Badge>
-                        {" "}<Badge colorScheme='purple'>{item.room_name_en}</Badge>
-                    </Text>
-                  </CardBody>
-                </Stack>
-              </Card>
-            ))
-          }
-        </SimpleGrid>
-      ) }
+                </Thead>
+                <Tbody>
+                  {GroupCourse?.map((item, index) => (
+                    <Tr key={index}>
+                      <Td> { getLocalLang == 'en' ? haddleDayOfWeek(item.day_w, 'en') : haddleDayOfWeek(item.day_w, 'th') } </Td>
+                      <Td> { item.time_from } - {item.time_to} </Td>
+                      <Td> { item.subject_code } </Td>
+                      <Td> { getLocalLang == 'en' ? item.subject_name_en : item.subject_name_th } </Td>
+                      <Td> { getLocalLang == 'en' ? item.teacher_name_en : item.teacher_name } </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : (
+          <SimpleGrid columns={[1, 1, 1, 2, 2]} spacing={2} pt="2" dropShadow={"3px"}>
+            {
+              GroupCourse?.map((item, index) => (
+                <Card direction={{ base: 'column', sm: 'row' }} overflow='hidden' variant='outline' key={index}>
+                  <Box bg={cScheme(item.day_w)+".300"} w='20px' p={0} color='white' />
+                  <Stack>
+                    <CardBody>
+                      <Heading size='sm'>
+                          {item.subject_code}
+                          {" "}<Badge colorScheme='blue'>{item.section_code}</Badge>
+                          {" "}{ getLocalLang == 'en' ? <Badge colorScheme={cScheme(item.day_w)}>{item.section_type_en}</Badge> : <Badge colorScheme={cScheme(item.day_w)}>{item.section_type_th}</Badge> }
+                      </Heading>
+                      <Text>{ getLocalLang == 'en' ? item.subject_name_en : item.subject_name_th }</Text>
+                      <Text>{ getLocalLang == 'en' ? item.teacher_name_en : item.teacher_name }</Text>
+                      <Text>
+                          <Badge colorScheme={cScheme(item.day_w)}> {
+                            getLocalLang == 'en' ? haddleDayOfWeek(item.day_w, 'en') : haddleDayOfWeek(item.day_w, 'th')
+                          } </Badge>
+                          {" "}<Badge colorScheme='purple'>{item.time_from} - {item.time_to}</Badge>
+                          {" "}<Badge colorScheme='purple'>{item.room_name_en}</Badge>
+                      </Text>
+                    </CardBody>
+                  </Stack>
+                </Card>
+              ))
+            }
+          </SimpleGrid>
+        ) }
+      </div>
+
       </>
   );
 };
@@ -163,7 +215,6 @@ const CardTable: React.FC<{GroupCourse: ResultGroupCourse[] | undefined}> = ({Gr
       setIsData(true)
     }
   }, [GroupCourse])
-
 
   if(isData) {
     return (

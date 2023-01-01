@@ -25,6 +25,8 @@ export default function Nav() {
     window.location.href = '/auth/login';
   }
 
+  // Test Commit in ipad
+
   useEffect(() => {
     Notiflix.Loading.dots('Loading...');
     if (user !== undefined && user !== null) {

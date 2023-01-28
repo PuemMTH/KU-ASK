@@ -61,8 +61,6 @@ export default function TimeTableShow() {
     });
   }, [accesstoken])
 
-
-
   const CompoNode: ReactNode = (
     <>
         <CardTable GroupCourse={gcData}/>

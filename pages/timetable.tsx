@@ -14,7 +14,6 @@ export default function TimeTableShow() {
   const router: NextRouter = useRouter()
   const accesstoken = useReadLocalStorage<string | undefined>("accesstoken");
   const user = useReadLocalStorage<LoginInF | undefined>("user");
-  const [isLoading, setIsLoading] = useState(false);
   const [isUser, setIsUser] = useState<LoginInF | undefined>(undefined);
 
   const [gcData, setGcData] = useState<ResultGroupCourse[] | undefined>(undefined)
